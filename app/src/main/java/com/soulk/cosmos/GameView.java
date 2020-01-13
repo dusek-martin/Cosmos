@@ -1,12 +1,17 @@
 package com.soulk.cosmos;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
+    private CharacterSprite characterSprite;
 
     public GameView(Context context){
         super(context);
@@ -15,8 +20,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
     }
 
-    public void update(){
-
+    @Override
+    public void draw(Canvas canvas){
+        super.draw(canvas);
+        if (canvas != null){
+            canvas.drawColor(Color.WHITE);
+            characterSprite.draw(canvas);
+        }
     }
 
     @Override
@@ -28,6 +38,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         thread.setRunning(true);
         thread.start();
+        characterSprite = new CharacterSprite(BitmapFactory.decodeResource(getResources(),R.drawable.rocket));
     }
 
     @Override
@@ -42,5 +53,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
             retry = false;
         }
+    }
+
+    public void update(){
+        characterSprite.updateCoordinates();
     }
 }

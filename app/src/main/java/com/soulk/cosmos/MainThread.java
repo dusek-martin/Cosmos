@@ -1,7 +1,6 @@
 package com.soulk.cosmos;
 
 import android.graphics.Canvas;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 
 public class MainThread extends Thread {
