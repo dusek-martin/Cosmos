@@ -11,7 +11,7 @@ import android.view.SurfaceView;
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
-    private CharacterSprite characterSprite;
+    private SpaceContinuum spaceContinuum;
 
     public GameView(Context context){
         super(context);
@@ -20,12 +20,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
     }
 
+    public void update(){spaceContinuum.update(0.03);}
+
     @Override
     public void draw(Canvas canvas){
         super.draw(canvas);
         if (canvas != null){
             //canvas.drawColor(Color.WHITE);
-            characterSprite.draw(canvas);
+            spaceContinuum.draw(canvas);
         }
     }
 
@@ -38,7 +40,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         thread.setRunning(true);
         thread.start();
-        characterSprite = new CharacterSprite(BitmapFactory.decodeResource(getResources(),R.drawable.rocket));
+        spaceContinuum = new SpaceContinuum();
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 0.01, 270, 10, 100, 300, 300);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 0.01, 90, 10, 200, 600, 1000);
     }
 
     @Override
@@ -53,9 +57,5 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             }
             retry = false;
         }
-    }
-
-    public void update(){
-        characterSprite.updateCoordinates();
     }
 }

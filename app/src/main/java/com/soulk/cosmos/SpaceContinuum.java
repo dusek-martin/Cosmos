@@ -1,6 +1,7 @@
 package com.soulk.cosmos;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import java.util.ArrayList;
 
@@ -18,19 +19,29 @@ public class SpaceContinuum {
         countId++;
         return spaceObjects.add(spaceObject);
     }
-    public boolean addSpaceObject(Bitmap image, double acceleration, double density,
-                                  double velocity, double volume, double startingPositionX,
-                                  double startingPositionY){
-        return addSpaceObject(makeSpaceObject(image, acceleration, density, velocity, volume,
+    public boolean addSpaceObject(Bitmap image, double density, double direction,
+                                  double velocity, double volume, float startingPositionX,
+                                  float startingPositionY){
+        return addSpaceObject(makeSpaceObject(image, density, direction, velocity, volume,
                 startingPositionX, startingPositionY));
     }
-    public SpaceObject makeSpaceObject(Bitmap image, double acceleration, double density,
-                                       double velocity, double volume,
-                                       double startingPositionX, double startingPositionY){
-        return new SpaceObject(countId, image, acceleration, density, velocity, volume,
+    public SpaceObject makeSpaceObject(Bitmap image, double density,
+                                       double direction, double velocity, double volume,
+                                       float startingPositionX, float startingPositionY){
+        return new SpaceObject(countId, image, density, direction, velocity, volume,
                 startingPositionX, startingPositionY);
     }
     public boolean deleteSpaceObject(SpaceObject spaceObject){return spaceObjects.remove(spaceObject);}
+
+    public void update(double seconds){
+        refreshSpaceObjectsCoordinates(seconds);
+    }
+
+    public void draw(Canvas canvas){
+        for (SpaceObject spaceObject: spaceObjects){
+            spaceObject.draw(canvas);
+        }
+    }
 
     public SpaceObject findSpaceObject(int id){
         for (SpaceObject so: spaceObjects){
@@ -41,42 +52,41 @@ public class SpaceContinuum {
         return null;
     }
 
-    public double[] calculateSpaceObjectsInterference(SpaceObject spaceObject){
-        double[] interference = new double[]{0, 0};
-        double r, x, y;
-        double a = 0, b = 0;
+    public ForceInterference calculateSpaceObjectsInterference(SpaceObject spaceObject){
+        ForceInterference forceInterference = new ForceInterference(0, 0);
+        double r;
+        float forceX = 0, forceY = 0;
 
         for (SpaceObject so: spaceObjects){
             if (so == spaceObject) continue;
 
-            y = spaceObject.getY() - so.getY();
-            x = spaceObject.getX() - so.getX();
+            r = Math.hypot(spaceObject.x - so.x, spaceObject.y - so.y);
+            if( r!= 0) forceInterference.force = G * (spaceObject.getWeight() * so.getWeight()) / (r * r);
 
-            r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-            if( r!= 0) interference[0] = G * (spaceObject.getWeight() * so.getWeight()) / (r * r);
+            forceInterference.direction = Math.toDegrees(Math.atan2(so.y - spaceObject.y, so.x - spaceObject.x));
+            if (forceInterference.direction < 0){forceInterference.direction += 360;}
 
-            interference[1] = Math.atan2(y, x);
-
-            a += interference[0]*Math.cos(interference[1]);
-            b += interference[0]*Math.sin(interference[1]);
+            forceX += forceInterference.force*Math.cos(Math.toRadians(forceInterference.direction));
+            forceY += -forceInterference.force*Math.sin(Math.toRadians(forceInterference.direction));
         }
 
-        interference[0] = Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
-        interference[1] = Math.atan2(b, a);
+        forceInterference.force = Math.hypot(forceX, forceY);
+        forceInterference.direction = Math.toDegrees(Math.atan2(forceY , forceX));
+        if (forceInterference.direction < 0) {forceInterference.direction += 360;}
 
-        return interference;
+        return forceInterference;
     }
 
-    public void refreshSpaceObjectsCoordinates(double time){
-        ArrayList<double[]> interferences = new ArrayList<double[]>();
+    public void refreshSpaceObjectsCoordinates(double seconds){
+        ArrayList<ForceInterference> forceInterferences = new ArrayList<>();
 
-        for (SpaceObject so: spaceObjects){
-            interferences.add(calculateSpaceObjectsInterference(so));
+        for (SpaceObject spaceObject: spaceObjects){
+            forceInterferences.add(calculateSpaceObjectsInterference(spaceObject));
         }
 
         int i = 0;
-        for (SpaceObject so: spaceObjects){
-            so.updateCoordinates(interferences.get(i)[0], interferences.get(i)[1], time);
+        for (SpaceObject spaceObject: spaceObjects){
+            spaceObject.updateCoordinates(forceInterferences.get(i), seconds);
             i++;
         }
     }
