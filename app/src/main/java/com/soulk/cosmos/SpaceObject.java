@@ -30,7 +30,7 @@ public class SpaceObject extends SpacePoint{
 
         this.velocity = Math.hypot(x - targetX, y - targetY) / seconds;
         this.direction = Math.toDegrees(Math.atan2(targetY - y, targetX - x));
-        if (this.direction < 0) {this.direction += 360;}
+        //if (this.direction < 0) {this.direction += 360;}
 
         x = (float) targetX;
         y = (float) targetY;

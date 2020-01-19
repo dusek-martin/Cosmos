@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class SpaceContinuum {
     private int countId;
     private ArrayList<SpaceObject> spaceObjects;
-    public static final double G = 6.67384*Math.pow(10, -11);
+    public static final double G = 1;
 
     public SpaceContinuum(){
         spaceObjects = new ArrayList<SpaceObject>();

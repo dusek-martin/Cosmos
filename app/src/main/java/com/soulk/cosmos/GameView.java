@@ -20,7 +20,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
     }
 
-    public void update(){spaceContinuum.update(0.03);}
+    public void update(){spaceContinuum.update(1);}
 
     @Override
     public void draw(Canvas canvas){
@@ -41,8 +41,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         thread.setRunning(true);
         thread.start();
         spaceContinuum = new SpaceContinuum();
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 0.01, 270, 10, 100, 300, 300);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 0.01, 90, 10, 200, 600, 1000);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 50, 270, 100, 100, 300, 300);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 50, 91, 100, 200, 600, 1000);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 50, 89, 75, 200, 300, 800);
     }
 
     @Override
