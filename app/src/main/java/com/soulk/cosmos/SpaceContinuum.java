@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class SpaceContinuum {
     private int countId;
     private ArrayList<SpaceObject> spaceObjects;
-    public static final double G = 1;
+    public static final double G = 0.1;
 
     public SpaceContinuum(){
         spaceObjects = new ArrayList<SpaceObject>();
@@ -63,7 +63,7 @@ public class SpaceContinuum {
             r = Math.hypot(spaceObject.x - so.x, spaceObject.y - so.y);
             if( r!= 0) forceInterference.force = G * (spaceObject.getWeight() * so.getWeight()) / (r * r);
 
-            forceInterference.direction = Math.toDegrees(Math.atan2(so.y - spaceObject.y, so.x - spaceObject.x));
+            forceInterference.direction = -Math.toDegrees(Math.atan2(so.y - spaceObject.y, so.x - spaceObject.x));
             if (forceInterference.direction < 0){forceInterference.direction += 360;}
 
             forceX += forceInterference.force*Math.cos(Math.toRadians(forceInterference.direction));
@@ -71,7 +71,7 @@ public class SpaceContinuum {
         }
 
         forceInterference.force = Math.hypot(forceX, forceY);
-        forceInterference.direction = Math.toDegrees(Math.atan2(forceY , forceX));
+        forceInterference.direction = -Math.toDegrees(Math.atan2(forceY , forceX));
         if (forceInterference.direction < 0) {forceInterference.direction += 360;}
 
         return forceInterference;
