@@ -37,7 +37,7 @@ public class SpaceObject extends SpacePoint{
     }
 
     public void draw(Canvas canvas){
-        canvas.drawBitmap(image, x, y, null);
+        canvas.drawBitmap(image, (float)(x - volume/2), (float)(y - volume/2), null);
     }
 
 

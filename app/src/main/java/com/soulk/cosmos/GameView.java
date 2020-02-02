@@ -41,17 +41,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         thread.setRunning(true);
         thread.start();
         spaceContinuum = new SpaceContinuum();
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 260, 2, 10, 200, 300);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 200, 170, 0, 400, 400, 800);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 180, 2, 10, 800, 1200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 220, 2, 10, 700, 200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 70, 2, 10, 600, 100);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 270, 2, 10, 500, 800);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 90, 2, 10, 400, 1200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 70, 2, 10, 300, 600);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 10, 0, 2, 10, 200, 1200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 15, 270, 2, 8, 800, 300);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 50, 70, 2, 17, 200, 1400);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 260, 2, 120, 200, 200);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 80, 2, 120, 800, 1600);
+        spaceContinuum.addStaticSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 0, 0, 200, 500, 1200);
     }
 
     @Override
