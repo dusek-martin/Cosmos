@@ -42,6 +42,7 @@ public class SpaceObject extends SpacePoint{
 
 
     public double getDensity(){return density;}
+    public double getDirection(){return direction;}
     public double getVelocity(){return velocity;}
     public double getVolume(){return volume;}
     public Bitmap getImage(){return image;}
@@ -49,6 +50,7 @@ public class SpaceObject extends SpacePoint{
     public double[] getInformation(){return new double[]{density, velocity, volume};}
     public double getWeight() {return density*volume;}
     public void setDensity(double density){this.density = density;}
+    public void setDirection(double direction){this.direction = direction;}
     public void setVelocity(double velocity){this.velocity = velocity;}
     public void setVolume(double volume){this.volume = volume;}
     public void setImage(Bitmap image){this.image = image;}

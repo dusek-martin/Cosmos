@@ -43,7 +43,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         spaceContinuum = new SpaceContinuum();
         spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 260, 2, 120, 200, 200);
         spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 80, 2, 120, 800, 1600);
-        spaceContinuum.addStaticSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 0, 0, 200, 500, 1200);
+        spaceContinuum.addStaticSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 0, 2, 200, 100, 1200);
     }
 
     @Override
