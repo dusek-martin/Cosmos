@@ -11,7 +11,7 @@ public class StaticSpaceObject extends SpaceObject {
     }
 
     @Override
-    public void updateCoordinates(ForceInterference forceInterference, double seconds){
+    public void updateCoordinates(Vector forceInterference, double seconds){
         double targetX = x, targetY = y;
 
         targetX += super.getVelocity() * seconds * Math.cos(Math.toRadians(super.getDirection()));

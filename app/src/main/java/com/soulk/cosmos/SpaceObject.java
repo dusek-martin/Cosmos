@@ -17,8 +17,8 @@ public class SpaceObject extends SpacePoint{
         this.image = Bitmap.createScaledBitmap(image, (int) volume, (int) volume, false);
     }
 
-    public void updateCoordinates(ForceInterference forceInterference, double seconds){
-        double forceAcceleration = forceInterference.force / getWeight();
+    public void updateCoordinates(Vector forceInterference, double seconds){
+        double forceAcceleration = forceInterference.size / getWeight();
         double forceVelocity = forceAcceleration * seconds;
         double targetX = x, targetY = y;
 

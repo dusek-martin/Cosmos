@@ -64,8 +64,9 @@ public class SpaceContinuum {
         return null;
     }
 
-    public ForceInterference calculateSpaceObjectsGravityInterference(SpaceObject spaceObject){
-        ForceInterference gravityForceInterference = new ForceInterference(0, 0);
+    public Vector calculateSpaceObjectsGravityInterference(SpaceObject spaceObject){
+        Vector gravityForceInterference = new Vector(0, 0);
+        // distance between two space objects
         double r;
         double forceX = 0, forceY = 0;
 
@@ -73,24 +74,22 @@ public class SpaceContinuum {
             if (so == spaceObject) continue;
 
             r = Math.hypot(spaceObject.x - so.x, spaceObject.y - so.y);
-            if( r!= 0) gravityForceInterference.force = G * (spaceObject.getWeight() * so.getWeight()) / (r * r);
+            if( r!= 0)
+                gravityForceInterference.size = G * (spaceObject.getWeight() * so.getWeight()) / (r * r);
 
             gravityForceInterference.direction = -Math.toDegrees(Math.atan2(so.y - spaceObject.y, so.x - spaceObject.x));
             if (gravityForceInterference.direction < 0){gravityForceInterference.direction += 360;}
 
-            forceX += gravityForceInterference.force * Math.cos(Math.toRadians(gravityForceInterference.direction));
-            forceY += -gravityForceInterference.force * Math.sin(Math.toRadians(gravityForceInterference.direction));
+            forceX += gravityForceInterference.size * Math.cos(Math.toRadians(gravityForceInterference.direction));
+            forceY += -gravityForceInterference.size * Math.sin(Math.toRadians(gravityForceInterference.direction));
         }
 
-        gravityForceInterference.force = Math.hypot(forceX, forceY);
-        gravityForceInterference.direction = -Math.toDegrees(Math.atan2(forceY , forceX));
-        if (gravityForceInterference.direction < 0) {gravityForceInterference.direction += 360;}
-
+        gravityForceInterference.setByCoordinates(forceX, forceY);
         return gravityForceInterference;
     }
 
     public void refreshSpaceObjectsCoordinates(double seconds){
-        ArrayList<ForceInterference> forceInterferences = new ArrayList<>();
+        ArrayList<Vector> forceInterferences = new ArrayList<>();
 
         for (SpaceObject spaceObject: spaceObjects){
             forceInterferences.add(calculateSpaceObjectsGravityInterference(spaceObject));
