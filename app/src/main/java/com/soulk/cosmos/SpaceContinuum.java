@@ -46,6 +46,7 @@ public class SpaceContinuum {
     public boolean deleteSpaceObject(SpaceObject spaceObject){return spaceObjects.remove(spaceObject);}
 
     public void update(double seconds){
+        solveCollisions();
         refreshSpaceObjectsCoordinates(seconds);
     }
 
@@ -64,6 +65,57 @@ public class SpaceContinuum {
         return null;
     }
 
+    // returns angle from spaceObject to so
+    public double getAngleBetweenSO(SpaceObject spaceObject, SpaceObject so){
+       double angle;
+       angle = -Math.toDegrees(Math.atan2(so.y - spaceObject.y, so.x - spaceObject.x));
+       if (angle < 0){angle += 360;}
+       return angle;
+    }
+
+    // returns true if there is a collision between these two SpaceObjects
+    public boolean checkCollision(SpaceObject spaceObject, SpaceObject so){
+        double distance = Math.hypot(spaceObject.x - so.x, spaceObject.y - so.y);
+        return distance <= ((spaceObject.getVolume()*0.85 + so.getVolume()*0.85) / 2) ;
+    }
+
+    public void solveCollisions(){
+        /*
+        for (SpaceObject spaceObject: spaceObjects){
+            for (SpaceObject so: spaceObjects){
+                if (!checkCollision(spaceObject, so)) continue;
+
+                double angleBetween = getAngleBetweenSO(spaceObject, so);
+                double impactAngle = spaceObject.getDirection();
+                double outcomeAngle = angleBetween * 2 - impactAngle + 180;
+                spaceObject.setDirection(outcomeAngle);
+            }
+        }
+         */
+
+        for (int i = 0; i < spaceObjects.size()-1; i++){
+            SpaceObject spaceObject = spaceObjects.get(i);
+            for (int j = i + 1; j < spaceObjects.size(); j++){
+                SpaceObject so = spaceObjects.get(j);
+                if (checkCollision(spaceObject, so)){
+                    double angleBetweenSO = getAngleBetweenSO(spaceObject, so);
+                    double impactAngle = spaceObject.getDirection();
+                    double outcomeAngle = angleBetweenSO - impactAngle + angleBetweenSO + 180;
+                    spaceObject.setDirection(outcomeAngle);
+/*
+                    double angleBetweenSO2 = getAngleBetweenSO(so, spaceObject);
+                    double impactAngle2 = so.getDirection();
+                    double outcomeAngle2 = angleBetweenSO - impactAngle + angleBetweenSO + 180;
+                    so.setDirection(outcomeAngle);
+*/
+                    //spaceObject.setDirection(spaceObject.getDirection() + 180);
+                    //so.setDirection(so.getDirection() + 180);
+                }
+            }
+        }
+
+    }
+
     public Vector calculateSpaceObjectsGravityInterference(SpaceObject spaceObject){
         Vector gravityForceInterference = new Vector(0, 0);
         // distance between two space objects
@@ -77,8 +129,7 @@ public class SpaceContinuum {
             if( r!= 0)
                 gravityForceInterference.size = G * (spaceObject.getWeight() * so.getWeight()) / (r * r);
 
-            gravityForceInterference.direction = -Math.toDegrees(Math.atan2(so.y - spaceObject.y, so.x - spaceObject.x));
-            if (gravityForceInterference.direction < 0){gravityForceInterference.direction += 360;}
+            gravityForceInterference.direction = getAngleBetweenSO(spaceObject, so);
 
             forceX += gravityForceInterference.size * Math.cos(Math.toRadians(gravityForceInterference.direction));
             forceY += -gravityForceInterference.size * Math.sin(Math.toRadians(gravityForceInterference.direction));

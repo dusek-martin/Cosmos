@@ -1,5 +1,6 @@
 package com.soulk.cosmos;
 
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
