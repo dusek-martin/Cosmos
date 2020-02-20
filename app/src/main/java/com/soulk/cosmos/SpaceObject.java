@@ -6,56 +6,43 @@ import android.graphics.Canvas;
 public class SpaceObject extends SpacePoint{
     private double density, direction, velocity, volume;
     private Bitmap image;
+    private Vector speed;
 
-    public SpaceObject(int id, Bitmap image, double density, double direction, double velocity,
-                       double volume, float startingPositionX, float startingPositionY){
-        super(id, startingPositionX, startingPositionY);
-        this.density = density;
-        this.direction = direction;
-        this.velocity = velocity;
-        this.volume = volume;
+    public SpaceObject(int id, Bitmap image, double density, double volume,
+                       Vector position, Vector speed){
+        super(id, position);
         this.image = Bitmap.createScaledBitmap(image, (int) volume, (int) volume, false);
+        this.density = density;
+        this.volume = volume;
+        this.speed = speed;
     }
 
-    public void updateCoordinates(Vector forceInterference, double seconds){
-        double forceAcceleration = forceInterference.size / getWeight();
-        double forceVelocity = forceAcceleration * seconds;
-        double targetX = x, targetY = y;
+    public void updatePosition(Vector forceInterference, double seconds){
+        Vector targetPosition = position;
+        Vector forceSpeed = Vector.scaleVector(forceInterference, (1 / getWeight()));
 
-        targetX += forceVelocity * seconds * Math.cos(Math.toRadians(forceInterference.direction));
-        targetY += -forceVelocity * seconds * Math.sin(Math.toRadians(forceInterference.direction));
+        targetPosition = Vector.addVectors(targetPosition, Vector.scaleVector(speed, seconds));
+        targetPosition = Vector.addVectors(targetPosition, Vector.scaleVector(forceSpeed, seconds));
 
-        targetX += this.velocity * seconds * Math.cos(Math.toRadians(this.direction));
-        targetY += -this.velocity * seconds * Math.sin(Math.toRadians(this.direction));
+        speed = Vector.scaleVector(Vector.subtractVectors(targetPosition, position), (1 / seconds));
 
-        this.velocity = Math.hypot(x - targetX, y - targetY) / seconds;
-        this.direction = -Math.toDegrees(Math.atan2((targetY - y), (targetX - x)));
-        if (this.direction < 0) {this.direction += 360;}
-
-        x = (float) targetX;
-        y = (float) targetY;
+        position = targetPosition;
     }
 
     public void draw(Canvas canvas){
-        canvas.drawBitmap(image, (float)(x - volume/2), (float)(y - volume/2), null);
+        canvas.drawBitmap(image, (float)(position.x - volume/2), (float)(position.y - volume/2), null);
     }
 
 
-    public double getDensity(){return density;}
-    public double getDirection(){return direction;}
-    public double getVelocity(){return velocity;}
-    public double getVolume(){return volume;}
     public Bitmap getImage(){return image;}
-    public double[] getCoordinates(){return new double[] {x, y};}
-    public double[] getInformation(){return new double[]{density, velocity, volume};}
+    public double getDensity(){return density;}
+    public double getVolume(){return volume;}
+    public Vector getSpeed(){return speed;}
+    public Vector getPosition(){return this.position;}
     public double getWeight() {return density*volume;}
-    public void setDensity(double density){this.density = density;}
-    public void setDirection(double direction){
-        direction = (direction > 360) ? direction - 360 : direction;
-        direction = (direction < 0) ? direction + 360 : direction;
-        this.direction = direction;
-    }
-    public void setVelocity(double velocity){this.velocity = velocity;}
-    public void setVolume(double volume){this.volume = volume;}
+
     public void setImage(Bitmap image){this.image = image;}
+    public void setDensity(double density){this.density = density;}
+    public void setVolume(double volume){this.volume = volume;}
+    public void setSpeed(Vector speed){this.speed = speed;}
 }

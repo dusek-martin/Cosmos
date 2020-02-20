@@ -42,22 +42,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         thread.start();
         spaceContinuum = new SpaceContinuum();
 
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 230, 2, 120, 200, 200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 80, 2, 120, 800, 1600);
-        spaceContinuum.addStaticSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 0, 0.8, 500, 400, 800);
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 300, 120, new Vector(200, 200), new Vector(0, 5));
+        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 300, 220, new Vector(600, 1200), new Vector(0, -5));
 
-
-        /* oběžná dráha
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 230, 2, 120, 200, 200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 80, 2, 120, 800, 1600);
-        spaceContinuum.addStaticSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 0, 0.8, 200, 100, 1200);
-        */
-        /* Gravity simulation
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 260, 2, 120, 200, 200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 230, 2, 120, 500, 200);
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 100, 90, 2, 120, 400, 1000);
-        spaceContinuum.addStaticSpaceObject(BitmapFactory.decodeResource(getResources(),R.drawable.asteroid1), 800, 0, 0, 8000, 500, 5200);
-        */
     }
 
 

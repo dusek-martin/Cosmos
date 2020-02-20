@@ -2,17 +2,12 @@ package com.soulk.cosmos;
 
 public class SpacePoint {
     private int id;
-    protected float x, y;
+    public Vector position;
 
-    public SpacePoint(int id, float x, float y){
+    public SpacePoint(int id, Vector position){
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.position = position;
     }
 
     public int getId() {return id;}
-//    public float getX(){return x;}
-//    public float getY() {return y;}
-//    public void setX(float x) {this.x = x;}
-//    public void setY(float y) {this.y = y;}
 }

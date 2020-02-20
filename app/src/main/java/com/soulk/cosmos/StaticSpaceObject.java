@@ -4,24 +4,19 @@ import android.graphics.Bitmap;
 
 public class StaticSpaceObject extends SpaceObject {
 
-    public StaticSpaceObject(int id, Bitmap image, double density, double direction, double velocity,
-                             double volume, float startingPositionX, float startingPositionY){
-        super(id, image, density, direction, velocity, volume,
-                startingPositionX, startingPositionY);
+    public StaticSpaceObject(int id, Bitmap image, double density, double volume,
+                             Vector position, Vector speed){
+        super(id, image, density, volume, position, speed);
     }
 
     @Override
-    public void updateCoordinates(Vector forceInterference, double seconds){
-        double targetX = x, targetY = y;
+    public void updatePosition(Vector forceInterference, double seconds){
+        Vector targetPosition = position;
 
-        targetX += super.getVelocity() * seconds * Math.cos(Math.toRadians(super.getDirection()));
-        targetY += -super.getVelocity() * seconds * Math.sin(Math.toRadians(super.getDirection()));
+        targetPosition = Vector.addVectors(targetPosition, Vector.scaleVector(this.getSpeed(), seconds));
 
-        super.setVelocity(Math.hypot(x - targetX, y - targetY) / seconds);
-        super.setDirection(-Math.toDegrees(Math.atan2((targetY - y), (targetX - x))));
-        if (super.getDirection() < 0) {super.setDirection(super.getDirection() + 360);}
+        this.setSpeed(Vector.subtractVectors(targetPosition, position));
 
-        x = (float) targetX;
-        y = (float) targetY;
+        position = targetPosition;
     }
 }
