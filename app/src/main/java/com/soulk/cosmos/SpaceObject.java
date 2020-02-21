@@ -33,16 +33,23 @@ public class SpaceObject extends SpacePoint{
         canvas.drawBitmap(image, (float)(position.x - volume/2), (float)(position.y - volume/2), null);
     }
 
+    public void absorb(SpaceObject so){
+        double finWeight = this.getWeight() + so.getWeight();
+        setVolume(2 * Math.sqrt(finWeight / (density * Math.PI)));
+    }
 
     public Bitmap getImage(){return image;}
     public double getDensity(){return density;}
     public double getVolume(){return volume;}
     public Vector getSpeed(){return speed;}
     public Vector getPosition(){return this.position;}
-    public double getWeight() {return density*volume;}
+    public double getWeight() {return (density * Math.PI * Math.pow(volume / 2, 2));}
 
     public void setImage(Bitmap image){this.image = image;}
     public void setDensity(double density){this.density = density;}
-    public void setVolume(double volume){this.volume = volume;}
+    public void setVolume(double volume){
+        this.volume = volume;
+        image = Bitmap.createScaledBitmap(image, (int) volume, (int) volume, false);
+    }
     public void setSpeed(Vector speed){this.speed = speed;}
 }

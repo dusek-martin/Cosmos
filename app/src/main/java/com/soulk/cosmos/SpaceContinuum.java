@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class SpaceContinuum {
     private int countId;
     private ArrayList<SpaceObject> spaceObjects;
-    public static final double G = 6.673 * Math.pow(10, -1);
+    public static final double G = 6.673 * Math.pow(10, -1); // G = 6.673 * Math.pow(10, -11); -> s takhle malými čísly to blbě počítá
 
     public SpaceContinuum(){
         spaceObjects = new ArrayList<SpaceObject>();
@@ -51,9 +51,10 @@ public class SpaceContinuum {
         return null;
     }
 
-    public void update(double seconds){
-        //solveCollisions();
-        updateSpaceObjects(seconds);
+    public void update(Canvas canvas, double seconds){
+        solveAbsorption();
+        bouncyWall(canvas);
+        updateGravityInterference(seconds);
     }
 
     public void draw(Canvas canvas){
@@ -68,8 +69,52 @@ public class SpaceContinuum {
         return distance <= ((spaceObject.getVolume()*0.85 + so.getVolume()*0.85) / 2);
     }
 
-    //TODO OPRAVIT
+    public void solveAbsorption(){
+        ArrayList<SpaceObject> soToDel = new ArrayList<SpaceObject>();
+        for (int i = 0; i < spaceObjects.size() - 1; i++){
+            SpaceObject spaceObject = spaceObjects.get(i);
+            for (int j = i + 1; j < spaceObjects.size(); j++){
+                SpaceObject so = spaceObjects.get(j);
+
+                double distance = Math.hypot(spaceObject.position.x - so.position.x, spaceObject.position.y - so.position.y);
+                if (distance <= ((spaceObject.getVolume()*0.4 + so.getVolume()*0.4) / 2)){
+                    if (spaceObject.getWeight() > so.getWeight()){
+                        spaceObject.setSpeed(Vector.addVectors(spaceObject.getSpeed(), Vector.scaleVector(so.getSpeed(), (so.getWeight() / spaceObject.getWeight()))));
+                        spaceObject.absorb(so);
+                        soToDel.add(so);
+                    } else {
+                        so.setSpeed(Vector.addVectors(so.getSpeed(), Vector.scaleVector(spaceObject.getSpeed(), (spaceObject.getWeight() / so.getWeight()))));
+                        so.absorb(spaceObject);
+                        soToDel.add(spaceObject);
+                    }
+                }
+            }
+        }
+        for (SpaceObject so: soToDel){
+            spaceObjects.remove(so);
+        }
+    }
+
+    public void bouncyWall(Canvas canvas){
+        ArrayList<SpaceObject> soToDel = new ArrayList<SpaceObject>();
+        for (int i = 0; i < spaceObjects.size(); i++){
+            SpaceObject spaceObject = spaceObjects.get(i);
+
+            if (spaceObject.position.x + (spaceObject.getVolume() * 0.4) > canvas.getWidth()){
+                spaceObject.getSpeed().x = -spaceObject.getSpeed().x;
+            } else if (spaceObject.position.x - (spaceObject.getVolume() * 0.4) < 0) {
+                spaceObject.getSpeed().x = -spaceObject.getSpeed().x;
+            } else if (spaceObject.position.y + (spaceObject.getVolume() * 0.4) > canvas.getHeight()){
+                spaceObject.getSpeed().y = -spaceObject.getSpeed().y;
+            } else if (spaceObject.position.y - (spaceObject.getVolume() * 0.4) < 0){
+                spaceObject.getSpeed().y = -spaceObject.getSpeed().y;
+            }
+
+        }
+    }
+
     public void solveCollisions(){
+        ArrayList<SpaceObject> soToDel = new ArrayList<SpaceObject>();
         for (int i = 0; i < spaceObjects.size() - 1; i++){
             SpaceObject spaceObject = spaceObjects.get(i);
             for (int j = i + 1; j < spaceObjects.size(); j++){
@@ -84,7 +129,6 @@ public class SpaceContinuum {
                     distance.setAngle(distance.getAngle() + Math.PI);
                     impactAngle = so.getSpeed().getAngle();
                     outcomeAngle = distance.getAngle() - impactAngle + distance.getAngle() + Math.PI;
-                    spaceObject.getSpeed().setAngle(outcomeAngle);
                     so.getSpeed().setAngle(outcomeAngle);
                 }
             }
@@ -107,7 +151,7 @@ public class SpaceContinuum {
         return targetGravityForce;
     }
 
-    public void updateSpaceObjects(double seconds){
+    public void updateGravityInterference(double seconds){
         ArrayList<Vector> forceInterferences = new ArrayList<>();
 
         for (SpaceObject spaceObject: spaceObjects){

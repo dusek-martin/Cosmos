@@ -26,6 +26,9 @@ public class Vector {
     public static Vector scaleVector(Vector a, double s) {
         return new Vector((float) (a.x * s), (float) (a.y * s));
     }
+    public static Vector byAngle(double angle) {
+        return new Vector(1, angle);
+    }
 
     //angle counter-clockwise from X axis in radians
     public double getAngle() {
