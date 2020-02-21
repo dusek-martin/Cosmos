@@ -6,7 +6,7 @@ import android.graphics.Paint;
 
 public class Shot {
     public Vector position, speed;
-    private Paint paint;
+    private Paint paint = new Paint();
 
     public Shot(Canvas canvas, Vector position, double angle)
     {
@@ -14,7 +14,7 @@ public class Shot {
         speed = new Vector(450, angle);
     }
 
-    public void update(float tickTime)
+    public void update(double tickTime)
     {
         position = Vector.addVectors(position, Vector.scaleVector(speed, tickTime));
     }

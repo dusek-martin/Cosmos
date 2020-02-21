@@ -8,10 +8,10 @@ import java.util.ArrayList;
 public class Rocket {
     public Vector position, speed;
     private float angle;
-    private float size = 60;
+    private float size = 80;
     private float maxSpeed = 350;
     private ArrayList<Shot> shots = new ArrayList<Shot>();
-    private Paint paint;
+    private Paint paint = new Paint();
 
     public Rocket(Vector position)
     {
@@ -20,7 +20,7 @@ public class Rocket {
         angle = 0;
     }
 
-    public void update(Canvas canvas, GameInput input, float tickTime)
+    public void update(Canvas canvas, GameInput input, double tickTime)
     {
         //ovládání rakety
         controlRocket(canvas, input, tickTime);
@@ -109,7 +109,7 @@ public class Rocket {
         }
     }
 
-    private void controlRocket(Canvas canvas, GameInput input, float tickTime)
+    private void controlRocket(Canvas canvas, GameInput input, double tickTime)
     {
         //reakce na ovladani směru
         if (input.left) angle -= tickTime * 2 * (float)Math.PI * 2 / 3;

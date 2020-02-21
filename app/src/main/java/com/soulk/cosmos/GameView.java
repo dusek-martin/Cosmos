@@ -21,8 +21,9 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
     }
 
-    public void update(Canvas canvas, double seconds){
-        spaceContinuum.update(canvas, 0.5);
+    public void update(Canvas canvas, GameInput input, double tickTime){
+        rocket.update(canvas, input, tickTime);
+        spaceContinuum.update(canvas, tickTime);
     }
 
     @Override
@@ -30,8 +31,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         if (canvas != null){
             canvas.drawColor(Color.LTGRAY);
-            spaceContinuum.draw(canvas);
             rocket.draw(canvas);
+            spaceContinuum.draw(canvas);
         }
     }
 
