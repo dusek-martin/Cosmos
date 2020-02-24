@@ -48,6 +48,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
             canvas.drawCircle(touchPosition.x, touchPosition.y, 75, paint);
             canvas.drawCircle(input.upPosition.x, input.upPosition.y, 75, paint);
+            canvas.drawCircle(input.firePosition.x, input.firePosition.y, 75, paint);
             canvas.drawCircle(input.leftPosition.x, input.leftPosition.y, 75, paint);
             canvas.drawCircle(input.rightPosition.x, input.rightPosition.y, 75, paint);
         }
@@ -104,7 +105,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < 75) {
                     input.up = true;
                     break;
-                } else if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < 75){
+                }
+                if (Vector.subtractVectors(touchPosition, input.firePosition).getSize() < 75) {
+                    input.fire = true;
+                    break;
+                }
+                if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < 75){
                     input.left = true;
                     break;
                 } else if (Vector.subtractVectors(touchPosition, input.rightPosition).getSize() < 75){

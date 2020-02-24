@@ -12,6 +12,7 @@ public class Shot {
     {
         this.position = position;
         speed = new Vector(450, angle);
+        paint.setColor(Color.WHITE);
     }
 
     public void update(double tickTime)

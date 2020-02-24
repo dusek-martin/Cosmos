@@ -3,7 +3,7 @@ package com.soulk.cosmos;
 
 public class GameInput {
     public boolean left, right, up, down, fire;
-    public Vector upPosition, leftPosition, rightPosition;
+    public Vector upPosition, firePosition, leftPosition, rightPosition;
 
 
     public GameInput(){
@@ -14,6 +14,7 @@ public class GameInput {
         fire = false;
 
         upPosition = new Vector((float)(150), (float)(1600));
+        firePosition = new Vector((float)(300), (float)(1600));
         leftPosition = new Vector((float)(150), (float)(150));
         rightPosition = new Vector((float)(150), (float)(300));
     }
