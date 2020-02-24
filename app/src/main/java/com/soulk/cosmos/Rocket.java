@@ -128,8 +128,8 @@ public class Rocket {
     private void controlRocket(Canvas canvas, GameInput input, double tickTime)
     {
         //reakce na ovladani směru
-        if (input.left) angle -= tickTime * 2 * (float)Math.PI * 2 / 3;
-        if (input.right) angle += tickTime * 2 * (float)Math.PI * 2 / 3;
+        if (input.left) angle += tickTime * 2 * (float)Math.PI / 3;
+        if (input.right) angle -= tickTime * 2 * (float)Math.PI / 3;
 
         //reakce na ovladani rychlosti
         if (input.up) speed = Vector.addVectors(speed, Vector.scaleVector(Vector.byAngle(angle) , (300 * tickTime)));

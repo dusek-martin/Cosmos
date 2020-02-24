@@ -26,7 +26,7 @@ public class MainThread extends Thread {
         long totalTime = 0;
         int frameCount = 0;
         long targetTime = 1000 / targetFPS;
-        GameInput input = new GameInput();
+        GameInput input = this.gameView.input;
 
         while (running) {
             startTime = System.nanoTime();
@@ -35,7 +35,7 @@ public class MainThread extends Thread {
             try {
                 canvas = this.surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
-                    this.gameView.update(canvas, input,0.5);
+                    this.gameView.update(canvas, input,0.05);
                     this.gameView.draw(canvas);
                 }
             } catch (Exception e) {
