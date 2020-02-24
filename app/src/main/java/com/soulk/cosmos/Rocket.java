@@ -1,7 +1,9 @@
 package com.soulk.cosmos;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 
 import java.util.ArrayList;
 
@@ -18,6 +20,8 @@ public class Rocket {
         this.position = position;
         speed = new Vector(0, 0);
         angle = 0;
+        paint.setColor(Color.LTGRAY);
+        //paint.setStyle(Paint.Style.FILL);
     }
 
     public void update(Canvas canvas, GameInput input, double tickTime)
@@ -59,14 +63,26 @@ public class Rocket {
 
     private void drawRocket(Canvas canvas, Vector position)
     {
-        //tři úsečky otáčené kolem těžiště rakety
+        //určení rohů trojúhelníku
         Vector tipOfRocket = Vector.addVectors(position, Vector.scaleVector(Vector.byAngle(angle), (size * 2 / 3)));
         Vector baseMid = Vector.addVectors(position, Vector.scaleVector(Vector.byAngle(angle + Math.PI), (size / 3)));
         Vector baseRight = Vector.addVectors(baseMid, (Vector.scaleVector(Vector.byAngle(angle + Math.PI / 2), (size / 4))));
         Vector baseLeft = Vector.addVectors(baseMid, (Vector.scaleVector(Vector.byAngle(angle - Math.PI / 2), (size / 4))));
-        canvas.drawLine(tipOfRocket.x, tipOfRocket.y, baseRight.x, baseRight.y, paint);
-        canvas.drawLine(tipOfRocket.x, tipOfRocket.y, baseLeft.x, baseLeft.y, paint);
-        canvas.drawLine(baseRight.x, baseRight.y, baseLeft.x, baseLeft.y, paint);
+
+        //tři úsečky otáčené kolem těžiště rakety
+        //canvas.drawLine(tipOfRocket.x, tipOfRocket.y, baseRight.x, baseRight.y, paint);
+        //canvas.drawLine(tipOfRocket.x, tipOfRocket.y, baseLeft.x, baseLeft.y, paint);
+        //canvas.drawLine(baseRight.x, baseRight.y, baseLeft.x, baseLeft.y, paint);
+
+        //plný trojúhelník
+        Path path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+        path.moveTo(tipOfRocket.x, tipOfRocket.y);
+        path.lineTo(baseLeft.x, baseLeft.y);
+        path.lineTo(baseRight.x, baseRight.y);
+        path.close();
+
+        canvas.drawPath(path, paint);
     }
 
     private void teleportToOtherSide(Canvas canvas)

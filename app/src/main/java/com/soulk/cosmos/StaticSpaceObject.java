@@ -10,7 +10,7 @@ public class StaticSpaceObject extends SpaceObject {
     }
 
     @Override
-    public void updatePosition(Vector forceInterference, double seconds){
+    public void update(Vector forceInterference, double seconds){
         Vector targetPosition = position;
 
         targetPosition = Vector.addVectors(targetPosition, Vector.scaleVector(this.getSpeed(), seconds));

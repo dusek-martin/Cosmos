@@ -160,7 +160,7 @@ public class SpaceContinuum {
 
         int i = 0;
         for (SpaceObject spaceObject: spaceObjects){
-            spaceObject.updatePosition(forceInterferences.get(i++), seconds);
+            spaceObject.update(forceInterferences.get(i++), seconds);
         }
     }
 

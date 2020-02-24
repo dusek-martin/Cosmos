@@ -2,11 +2,15 @@ package com.soulk.cosmos;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 
 public class SpaceObject extends SpacePoint{
     private double density, direction, velocity, volume;
     private Bitmap image;
     private Vector speed;
+    private Paint paint = new Paint();
+    float[] colorInHSV;
 
     public SpaceObject(int id, Bitmap image, double density, double volume,
                        Vector position, Vector speed){
@@ -15,9 +19,20 @@ public class SpaceObject extends SpacePoint{
         this.density = density;
         this.volume = volume;
         this.speed = speed;
+        colorInHSV = new float[]{60, (float)(volume / 2 / 100), (float)(volume / 2 / 100)};
+        paint.setColor(Color.HSVToColor(colorInHSV));
     }
 
-    public void updatePosition(Vector forceInterference, double seconds){
+    public SpaceObject(int id, double density, double volume,
+                       Vector position, Vector speed){
+        super(id, position);
+        this.density = density;
+        this.volume = volume;
+        this.speed = speed;
+        paint.setColor(Color.HSVToColor(colorInHSV));
+    }
+
+    public void update(Vector forceInterference, double seconds){
         Vector targetPosition = position;
         Vector forceSpeed = Vector.scaleVector(forceInterference, (1 / getWeight()));
 
@@ -30,7 +45,8 @@ public class SpaceObject extends SpacePoint{
     }
 
     public void draw(Canvas canvas){
-        canvas.drawBitmap(image, (float)(position.x - volume/2), (float)(position.y - volume/2), null);
+        //canvas.drawBitmap(image, (float)(position.x - volume/2), (float)(position.y - volume/2), null);
+        canvas.drawCircle(position.x, position.y, (float)(volume / 2), paint);
     }
 
     public void absorb(SpaceObject so){
@@ -50,6 +66,10 @@ public class SpaceObject extends SpacePoint{
     public void setVolume(double volume){
         this.volume = volume;
         image = Bitmap.createScaledBitmap(image, (int) volume, (int) volume, false);
+        colorInHSV[1] = (float)(volume / 2 / 100);
+        colorInHSV[2] = (float)(volume / 2 / 100);
+        paint.setColor(Color.HSVToColor(colorInHSV));
+
     }
     public void setSpeed(Vector speed){this.speed = speed;}
 }
