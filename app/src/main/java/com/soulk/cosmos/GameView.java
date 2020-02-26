@@ -17,10 +17,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Rocket rocket;
 
     private Vector touchPosition;
-    private Paint paint = new Paint();
-    private DisplayMetrics displaymetrics = new DisplayMetrics();
     public GameInput input;
-    public Vector screenSize = new Vector((float) displaymetrics.widthPixels, (float) displaymetrics.heightPixels);
 
     public GameView(Context context) {
         super(context);
@@ -29,8 +26,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setFocusable(true);
 
         input = new GameInput();
-        touchPosition = new Vector(0, 0);
-        paint.setColor(Color.WHITE);
+        touchPosition = null;
     }
 
     public void update(Canvas canvas, GameInput input, double tickTime) {
@@ -45,12 +41,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             //canvas.drawColor(Color.LTGRAY);
             rocket.draw(canvas);
             spaceContinuum.draw(canvas);
-
-            canvas.drawCircle(touchPosition.x, touchPosition.y, 75, paint);
-            canvas.drawCircle(input.upPosition.x, input.upPosition.y, 75, paint);
-            canvas.drawCircle(input.firePosition.x, input.firePosition.y, 75, paint);
-            canvas.drawCircle(input.leftPosition.x, input.leftPosition.y, 75, paint);
-            canvas.drawCircle(input.rightPosition.x, input.rightPosition.y, 75, paint);
+            input.draw(canvas);
         }
     }
 
@@ -95,30 +86,31 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        touchPosition.x = event.getX();
-        touchPosition.y = event.getY();
 
-        input.reset();
+        touchPosition = new Vector(event.getX(), event.getY());
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < 75) {
                     input.up = true;
-                    break;
                 }
                 if (Vector.subtractVectors(touchPosition, input.firePosition).getSize() < 75) {
                     input.fire = true;
-                    break;
                 }
                 if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < 75){
                     input.left = true;
-                    break;
                 } else if (Vector.subtractVectors(touchPosition, input.rightPosition).getSize() < 75){
                     input.right = true;
-                    break;
                 }
+                break;
+            case MotionEvent.ACTION_UP:
+                input.reset();
+                touchPosition = null;
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
         }
 
-        return false;
+        return true;
     }
 }
