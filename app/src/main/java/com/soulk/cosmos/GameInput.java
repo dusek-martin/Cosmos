@@ -6,7 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 public class GameInput {
-    public boolean left, right, up, down, fire;
+    public boolean left, right, up, fire;
     public Vector upPosition, firePosition, leftPosition, rightPosition;
     Paint paint = new Paint();
 
@@ -15,7 +15,6 @@ public class GameInput {
         left = false;
         right = false;
         up = false;
-        down = false;
         fire = false;
 
         upPosition = new Vector((float)(150), (float)(1600));
@@ -30,7 +29,6 @@ public class GameInput {
         left = false;
         right = false;
         up = false;
-        down = false;
         fire = false;
     }
 

@@ -6,8 +6,8 @@ public class Vector {
     public float x, y;
 
     public Vector(double size, double angle) {
-        x = getX(size, angle);
-        y = getY(size, angle);
+        this.x = getX(size, angle);
+        this.y = getY(size, angle);
     }
 
     public Vector(float x, float y) {

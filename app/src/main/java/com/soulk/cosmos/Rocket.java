@@ -7,27 +7,31 @@ import android.graphics.Path;
 
 import java.util.ArrayList;
 
-public class Rocket {
+public class Rocket implements IGravityObject {
     public Vector position, speed;
     private float angle;
     private float size = 80;
     private float maxSpeed = 350;
     private ArrayList<Shot> shots = new ArrayList<Shot>();
     private Paint paint = new Paint();
+    private GameInput input;
 
-    public Rocket(Vector position)
+    public Rocket(Vector position, GameInput input)
     {
         this.position = position;
         speed = new Vector(0, 0);
         angle = 0;
         paint.setColor(Color.LTGRAY);
+        this.input = input;
         //paint.setStyle(Paint.Style.FILL);
     }
 
-    public void update(Canvas canvas, GameInput input, double tickTime)
+    public void update(Vector forceInterference, Canvas canvas, double tickTime)
     {
         //ovládání rakety
-        controlRocket(canvas, input, tickTime);
+        controlRocket(canvas, tickTime);
+
+        updateForceInterference(forceInterference, tickTime);
         //upravení pozice
         position = Vector.addVectors(position, Vector.scaleVector(speed, tickTime));
         //teleport na druhou stranu obrazovky
@@ -57,6 +61,18 @@ public class Rocket {
         {
             shot.draw(Canvas);
         }
+    }
+
+    private void updateForceInterference(Vector forceInterference, double seconds){
+        Vector targetPosition = position;
+        Vector forceSpeed = Vector.scaleVector(forceInterference, (0.25 / getWeight()));
+
+        targetPosition = Vector.addVectors(targetPosition, Vector.scaleVector(speed, seconds));
+        targetPosition = Vector.addVectors(targetPosition, Vector.scaleVector(forceSpeed, seconds));
+
+        speed = Vector.scaleVector(Vector.subtractVectors(targetPosition, position), (1 / seconds));
+
+        position = targetPosition;
     }
 
     public ArrayList<Shot> getShots() { return shots; }
@@ -125,7 +141,7 @@ public class Rocket {
         }
     }
 
-    private void controlRocket(Canvas canvas, GameInput input, double tickTime)
+    private void controlRocket(Canvas canvas, double tickTime)
     {
         //reakce na ovladani směru
         if (input.left) angle += tickTime * 2 * (float)Math.PI / 3;
@@ -133,8 +149,7 @@ public class Rocket {
 
         //reakce na ovladani rychlosti
         if (input.up) speed = Vector.addVectors(speed, Vector.scaleVector(Vector.byAngle(angle) , (300 * tickTime)));
-        if (input.down) speed = Vector.subtractVectors(speed, Vector.scaleVector(Vector.byAngle(angle), (300 * tickTime)));
-        if (!input.up && !input.down) speed = Vector.scaleVector(speed, (float)Math.pow(.3f, tickTime));
+        if (!input.up) speed = Vector.scaleVector(speed, Math.pow(.3f, tickTime));
         if (speed.getSize() >= maxSpeed) speed = new Vector((double)(maxSpeed), (double)speed.getAngle());
 
         //reakce na střílení
@@ -163,4 +178,7 @@ public class Rocket {
             }
         }
     }
+
+    public double getWeight(){return 100;}
+    public Vector getPosition(){return position;}
 }

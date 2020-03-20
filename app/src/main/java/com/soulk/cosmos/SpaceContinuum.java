@@ -7,121 +7,137 @@ import java.util.ArrayList;
 
 public class SpaceContinuum {
     private int countId;
-    private ArrayList<SpaceObject> spaceObjects;
+    private ArrayList<Planet> planets;
     public static final double G = 6.673 * Math.pow(10, -1); // G = 6.673 * Math.pow(10, -11); -> s takhle malými čísly to blbě počítá
 
     public SpaceContinuum(){
-        spaceObjects = new ArrayList<SpaceObject>();
+        planets = new ArrayList<Planet>();
     }
 
-    public boolean addSpaceObject(SpaceObject spaceObject){
-        countId++;
-        return spaceObjects.add(spaceObject);
+        public boolean addPlanet (Planet planet){
+        return planets.add(planet);
     }
 
-    public boolean addSpaceObject(Bitmap image, double density, double volume,
-                                  Vector position, Vector speed){
-        return addSpaceObject(makeSpaceObject(image, density, volume,
+        public boolean addPlanet (Bitmap image,double density, double radius,
+        Vector position, Vector speed){
+        return addPlanet(makePlanet(image, density, radius,
                 position, speed));
     }
 
-    public boolean addStaticSpaceObject(Bitmap image, double density, double volume,
-                                        Vector position, Vector speed){
-        return addSpaceObject(makeStaticSpaceObject(image, density, volume, position, speed));
+        public boolean addPlanet ( double density, double radius,
+        Vector position, Vector speed){
+        return addPlanet(makePlanet(density, radius,
+                position, speed));
     }
 
-    public SpaceObject makeSpaceObject(Bitmap image, double density, double volume,
-                                       Vector position, Vector speed){
-        return new SpaceObject(++countId, image, density, volume, position, speed);
+        public boolean addStaticSpaceObject (Bitmap image,double density, double radius,
+        Vector position, Vector speed){
+        return addPlanet(makeStaticPlanet(image, density, radius, position, speed));
     }
 
-    public SpaceObject makeStaticSpaceObject(Bitmap image, double density, double volume,
-                                       Vector position, Vector speed){
-        return new StaticSpaceObject(++countId, image, density, volume, position, speed);
+        public boolean addStaticSpaceObject ( double density, double radius,
+        Vector position, Vector speed){
+        return addPlanet(makeStaticPlanet(density, radius, position, speed));
     }
 
-    public boolean deleteSpaceObject(SpaceObject spaceObject){return spaceObjects.remove(spaceObject);}
+        public Planet makePlanet (Bitmap image,double density, double radius,
+        Vector position, Vector speed){
+        return new Planet(++countId, image, density, radius, position, speed);
+    }
 
-    public SpaceObject findSpaceObject(int id){
-        for (SpaceObject spaceObject: spaceObjects){
-            if (spaceObject.getId() == id){
-                return spaceObject;
+        public Planet makePlanet ( double density, double radius,
+        Vector position, Vector speed){
+        return new Planet(++countId, density, radius, position, speed);
+    }
+
+        public StaticPlanet makeStaticPlanet (Bitmap image,double density, double radius,
+        Vector position, Vector speed){
+        return new StaticPlanet(++countId, image, density, radius, position, speed);
+    }
+
+        public StaticPlanet makeStaticPlanet ( double density, double radius,
+        Vector position, Vector speed){
+        return new StaticPlanet(++countId, density, radius, position, speed);
+    }
+
+    public boolean deleteSpaceObject(IGravityObject spaceObject){return planets.remove(spaceObject);}
+
+    public Planet findPlanet(int id){
+        for (Planet planet: planets){
+            if (planet.getId() == id){
+                return planet;
             }
         }
         return null;
     }
 
-    public void update(Canvas canvas, double seconds){
+    public void update(Canvas canvas, double seconds, ArrayList<Shot> shots){
         solveAbsorption();
-        bouncyWall(canvas);
-        updateGravityInterference(seconds);
+        solvePlanetHit(shots);
+        updatePlanets(canvas, seconds);
     }
 
     public void draw(Canvas canvas){
-        for (SpaceObject spaceObject: spaceObjects){
-            spaceObject.draw(canvas);
+        for (Planet planet: planets){
+            planet.draw(canvas);
         }
     }
 
-    // returns true if there is a collision between these two SpaceObjects
-    public boolean checkCollision(SpaceObject spaceObject, SpaceObject so){
-        double distance = Math.hypot(spaceObject.position.x - so.position.x, spaceObject.position.y - so.position.y);
-        return distance <= ((spaceObject.getVolume()*0.85 + so.getVolume()*0.85) / 2);
+    public void updatePlanets(Canvas canvas, double seconds){
+        ArrayList<Vector> forceInterferences = new ArrayList<>();
+
+        for (Planet planet: planets){
+            forceInterferences.add(calcSOGravityInterference(planet));
+        }
+
+        int i = 0;
+        for (Planet planet: planets){
+            planet.update(forceInterferences.get(i++), canvas, seconds);
+        }
     }
 
     public void solveAbsorption(){
-        ArrayList<SpaceObject> soToDel = new ArrayList<SpaceObject>();
-        for (int i = 0; i < spaceObjects.size() - 1; i++){
-            SpaceObject spaceObject = spaceObjects.get(i);
-            for (int j = i + 1; j < spaceObjects.size(); j++){
-                SpaceObject so = spaceObjects.get(j);
+        ArrayList<ISpaceObject> planetsToDel = new ArrayList<ISpaceObject>();
+        for (int i = 0; i < planets.size() - 1; i++){
+            ISpaceObject spaceObject = planets.get(i);
+            for (int j = i + 1; j < planets.size(); j++){
+                ISpaceObject so = planets.get(j);
 
-                double distance = Math.hypot(spaceObject.position.x - so.position.x, spaceObject.position.y - so.position.y);
-                if (distance <= ((spaceObject.getVolume()*0.4 + so.getVolume()*0.4) / 2)){
+                double distance = Math.hypot(spaceObject.getPosition().x - so.getPosition().x, spaceObject.getPosition().y - so.getPosition().y);
+                if (distance <= ((spaceObject.getRadius() * 0.9 + so.getRadius() * 0.9) / 2)){
                     if (spaceObject.getWeight() > so.getWeight()){
                         spaceObject.setSpeed(Vector.addVectors(spaceObject.getSpeed(), Vector.scaleVector(so.getSpeed(), (so.getWeight() / spaceObject.getWeight()))));
                         spaceObject.absorb(so);
-                        soToDel.add(so);
+                        planetsToDel.add(so);
                     } else {
                         so.setSpeed(Vector.addVectors(so.getSpeed(), Vector.scaleVector(spaceObject.getSpeed(), (spaceObject.getWeight() / so.getWeight()))));
                         so.absorb(spaceObject);
-                        soToDel.add(spaceObject);
+                        planetsToDel.add(spaceObject);
                     }
                 }
             }
         }
-        for (SpaceObject so: soToDel){
-            spaceObjects.remove(so);
+        for (ISpaceObject so: planetsToDel){
+            planets.remove(so);
         }
     }
 
-    public void bouncyWall(Canvas canvas){
-        ArrayList<SpaceObject> soToDel = new ArrayList<SpaceObject>();
-        for (int i = 0; i < spaceObjects.size(); i++){
-            SpaceObject spaceObject = spaceObjects.get(i);
-
-            if (spaceObject.position.x + (spaceObject.getVolume() * 0.4) > canvas.getWidth()){
-                spaceObject.getSpeed().x = -spaceObject.getSpeed().x;
-            } else if (spaceObject.position.x - (spaceObject.getVolume() * 0.4) < 0) {
-                spaceObject.getSpeed().x = -spaceObject.getSpeed().x;
-            } else if (spaceObject.position.y + (spaceObject.getVolume() * 0.4) > canvas.getHeight()){
-                spaceObject.getSpeed().y = -spaceObject.getSpeed().y;
-            } else if (spaceObject.position.y - (spaceObject.getVolume() * 0.4) < 0){
-                spaceObject.getSpeed().y = -spaceObject.getSpeed().y;
-            }
-
-        }
+/*
+    // returns true if there is a collision between these two SpaceObjects
+    public boolean checkCollision(IGravityObject spaceObject, IGravityObject so){
+        double distance = Math.hypot(spaceObject.getPosition().x - so.getPosition().x, spaceObject.getPosition().y - so.getPosition().y);
+        return distance <= ((spaceObject.getRadius() * 0.95 + so.getRadius() * 0.95) / 2);
     }
 
     public void solveCollisions(){
-        ArrayList<SpaceObject> soToDel = new ArrayList<SpaceObject>();
-        for (int i = 0; i < spaceObjects.size() - 1; i++){
-            SpaceObject spaceObject = spaceObjects.get(i);
-            for (int j = i + 1; j < spaceObjects.size(); j++){
-                SpaceObject so = spaceObjects.get(j);
+        ArrayList<IGravityObject> soToDel = new ArrayList<IGravityObject>();
+        for (int i = 0; i < planets.size() - 1; i++){
+            IGravityObject spaceObject = planets.get(i);
+            for (int j = i + 1; j < planets.size(); j++){
+                IGravityObject so = planets.get(j);
 
                 if (checkCollision(spaceObject, so)){
-                    Vector distance = Vector.subtractVectors(so.position, spaceObject.position);
+                    Vector distance = Vector.subtractVectors(so.getPosition(), spaceObject.getPosition());
                     double impactAngle = spaceObject.getSpeed().getAngle();
                     double outcomeAngle = distance.getAngle() - impactAngle + distance.getAngle() + Math.PI;
                     spaceObject.getSpeed().setAngle(outcomeAngle);
@@ -134,16 +150,17 @@ public class SpaceContinuum {
             }
         }
     }
+*/
 
-    public Vector calcSOGravityInterference(SpaceObject spaceObject){
+    public Vector calcSOGravityInterference(IGravityObject spaceObject){
         Vector targetGravityForce = new Vector(0, 0);
 
-        for (SpaceObject so: spaceObjects){
-            if (so == spaceObject) continue;
+        for (IGravityObject go: planets){
+            if (go == spaceObject) continue;
 
-            Vector gravityForce = Vector.subtractVectors(so.position, spaceObject.position);
+            Vector gravityForce = Vector.subtractVectors(go.getPosition(), spaceObject.getPosition());
             if (gravityForce.getSize() != 0)
-                gravityForce.setSize(G * (spaceObject.getWeight() * so.getWeight()) / Math.pow(gravityForce.getSize(), 2));
+                gravityForce.setSize(G * (spaceObject.getWeight() * go.getWeight()) / Math.pow(gravityForce.getSize(), 2));
 
             targetGravityForce = Vector.addVectors(targetGravityForce, gravityForce);
         }
@@ -151,18 +168,33 @@ public class SpaceContinuum {
         return targetGravityForce;
     }
 
-    public void updateGravityInterference(double seconds){
-        ArrayList<Vector> forceInterferences = new ArrayList<>();
-
-        for (SpaceObject spaceObject: spaceObjects){
-            forceInterferences.add(calcSOGravityInterference(spaceObject));
+    private void solvePlanetHit(ArrayList<Shot> shots){
+        ArrayList<Shot> shotsToDel = new ArrayList<Shot>();
+        ArrayList<ISpaceObject> soToDel = new ArrayList<ISpaceObject>();
+        ArrayList<Planet> planetsToMake = new ArrayList<Planet>();
+        for (Shot shot: shots){
+            for (ISpaceObject so: planets){
+                if (Vector.subtractVectors(shot.position, so.getPosition()).getSize() < so.getRadius() * 0.9){
+                    shotsToDel.add(shot);
+                    if (!soToDel.contains(so)) {
+                        soToDel.add(so);
+                        double radiusOfOne = Math.sqrt(so.getWeight() / 2 / (so.getDensity() * Math.PI));
+                        planetsToMake.add(makePlanet(so.getDensity(), radiusOfOne, Vector.addVectors(so.getPosition(), new Vector(so.getRadius(), (shot.speed.getAngle() + Math.PI / 2))), Vector.addVectors(new Vector((so.getSpeed().getSize() * 2),(double)(so.getSpeed().getAngle() + Math.PI / 2)), Vector.scaleVector(shot.speed, 0.5))));
+                        planetsToMake.add(makePlanet(so.getDensity(), radiusOfOne, Vector.addVectors(so.getPosition(), new Vector(so.getRadius(), (shot.speed.getAngle() - Math.PI / 2))), Vector.addVectors(new Vector((so.getSpeed().getSize() * 2),(double)(so.getSpeed().getAngle() - Math.PI / 2)), Vector.scaleVector(shot.speed, 0.5))));
+                    }
+                }
+            }
         }
-
-        int i = 0;
-        for (SpaceObject spaceObject: spaceObjects){
-            spaceObject.update(forceInterferences.get(i++), seconds);
+        for (Shot shot: shotsToDel){
+            shots.remove(shot);
+        }
+        for (ISpaceObject so: soToDel){
+            planets.remove(so);
+        }
+        for (Planet planet: planetsToMake){
+            planets.add(planet);
         }
     }
 
-    public ArrayList<SpaceObject> getSpaceObjects(){return spaceObjects;}
+    public ArrayList<Planet> getPlanets(){return planets;}
 }

@@ -1,23 +1,22 @@
 package com.soulk.cosmos;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.Random;
+
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
-    private SpaceContinuum spaceContinuum;
-    private Rocket rocket;
+    public SpaceContinuum spaceContinuum;
+    public Rocket rocket;
 
     private Vector touchPosition;
     public GameInput input;
+    public Random random;
 
     public GameView(Context context) {
         super(context);
@@ -27,11 +26,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
         input = new GameInput();
         touchPosition = null;
+        random = new Random();
     }
 
-    public void update(Canvas canvas, GameInput input, double tickTime) {
-        rocket.update(canvas, input, tickTime);
-        spaceContinuum.update(canvas, tickTime);
+    public void update(Canvas canvas, double tickTime) {
+        Vector forceInterferenceOfRocket = spaceContinuum.calcSOGravityInterference(rocket);
+        rocket.update(forceInterferenceOfRocket, canvas, tickTime);
+        spaceContinuum.update(canvas, tickTime, rocket.getShots());
+        input.fire = false;
     }
 
     @Override
@@ -42,6 +44,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             rocket.draw(canvas);
             spaceContinuum.draw(canvas);
             input.draw(canvas);
+
         }
     }
 
@@ -54,21 +57,30 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public void surfaceCreated(SurfaceHolder holder) {
         thread.setRunning(true);
         thread.start();
+
         spaceContinuum = new SpaceContinuum();
+        spaceContinuum.addPlanet(random.nextInt(20), random.nextInt(70), new Vector(random.nextInt(800), random.nextInt(1600)), new Vector(random.nextInt(10), random.nextInt(10)));
+        spaceContinuum.addPlanet(10, 50, new Vector(800, 1400), new Vector(6, -20));
+        spaceContinuum.addPlanet(10, 30, new Vector(600, 900), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 40, new Vector(100, 900), new Vector(2, 1));
+        spaceContinuum.addPlanet(10, 30, new Vector(400, 800), new Vector(0, -5));
+        spaceContinuum.addPlanet(10, 30, new Vector(300, 1200), new Vector(-3, -1));
+        spaceContinuum.addPlanet(10, 30, new Vector(400, 100), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(500, 800), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(150, 200), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(400, 1600), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(400, 100), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(600, 1000), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(400, 1200), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(80, 1200), new Vector(0, 0));
+        spaceContinuum.addPlanet(10, 30, new Vector(400, 1200), new Vector(0, 0));
+        spaceContinuum.addPlanet(15, 7, new Vector(600, 500), new Vector(-1, 4));
+        spaceContinuum.addPlanet(5, 30, new Vector(800, 100), new Vector(0, 0));
+        spaceContinuum.addPlanet(5, 30, new Vector(100, 800), new Vector(0, 0));
+        spaceContinuum.addPlanet(5, 60, new Vector(800, 1000), new Vector(0, 0));
 
-        rocket = new Rocket(new Vector(300, 300));
-
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 50, new Vector(200, 200), new Vector(0, 8));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 50, new Vector(800, 1400), new Vector(2f, -8));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 30, new Vector(600, 900), new Vector(0, 0));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 30, new Vector(400, 1200), new Vector(0, 0));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 7, new Vector(600, 500), new Vector(-1, 4));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 30, new Vector(800, 100), new Vector(0, 0));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 30, new Vector(100, 800), new Vector(0, 0));
-        spaceContinuum.addSpaceObject(BitmapFactory.decodeResource(getResources(), R.drawable.asteroid1), 5, 60, new Vector(800, 1000), new Vector(0, 0));
-
+        rocket = new Rocket(new Vector(300, 300), input);
     }
-
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -88,7 +100,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     public boolean onTouchEvent(MotionEvent event) {
 
         touchPosition = new Vector(event.getX(), event.getY());
-
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < 75) {
@@ -107,10 +118,11 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                 input.reset();
                 touchPosition = null;
                 break;
-            case MotionEvent.ACTION_MOVE:
-                break;
+            //case MotionEvent.ACTION_MOVE:
+            //    break;
         }
 
         return true;
     }
+
 }

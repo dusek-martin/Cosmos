@@ -22,7 +22,7 @@ public class Shot {
 
     public void draw(Canvas canvas)
     {
-        Vector shotEnd = Vector.addVectors(position, Vector.scaleVector(speed, 0.05));
+        Vector shotEnd = Vector.addVectors(position, new Vector(100, speed.getAngle()));
         canvas.drawLine(position.x, position.y, shotEnd.x, shotEnd.y, paint);
     }
 
