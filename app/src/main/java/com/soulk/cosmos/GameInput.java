@@ -9,18 +9,13 @@ public class GameInput {
     public boolean left, right, up, fire;
     public Vector upPosition, firePosition, leftPosition, rightPosition;
     Paint paint = new Paint();
-
+    float height;
 
     public GameInput(){
         left = false;
         right = false;
         up = false;
         fire = false;
-
-        upPosition = new Vector((float)(150), (float)(1600));
-        firePosition = new Vector((float)(300), (float)(1600));
-        leftPosition = new Vector((float)(150), (float)(150));
-        rightPosition = new Vector((float)(150), (float)(300));
 
         paint.setColor(Color.DKGRAY);
     }
@@ -33,9 +28,15 @@ public class GameInput {
     }
 
     public void draw(Canvas canvas){
-        canvas.drawCircle(upPosition.x, upPosition.y, 75, paint);
-        canvas.drawCircle(firePosition.x, firePosition.y, 75, paint);
-        canvas.drawCircle(leftPosition.x, leftPosition.y, 75, paint);
-        canvas.drawCircle(rightPosition.x, rightPosition.y, 75, paint);
+
+        upPosition = new Vector((float)(height * 0.1), (float)(height * 0.85));
+        firePosition = new Vector((float)(height * 0.20), (float)(height * 0.85));
+        leftPosition = new Vector((float)(height * 0.1), (float)(height * 0.1));
+        rightPosition = new Vector((float)(height * 0.1), (float)(height * 0.20));
+
+        canvas.drawCircle(upPosition.x, upPosition.y, (float)(height * 0.05), paint);
+        canvas.drawCircle(firePosition.x, firePosition.y, (float)(height * 0.05), paint);
+        canvas.drawCircle(leftPosition.x, leftPosition.y, (float)(height * 0.05), paint);
+        canvas.drawCircle(rightPosition.x, rightPosition.y, (float)(height * 0.05), paint);
     }
 }

@@ -30,6 +30,7 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public void update(Canvas canvas, double tickTime) {
+        input.height = canvas.getHeight();
         Vector forceInterferenceOfRocket = spaceContinuum.calcSOGravityInterference(rocket);
         rocket.update(forceInterferenceOfRocket, canvas, tickTime);
         spaceContinuum.update(canvas, tickTime, rocket.getShots());
@@ -102,16 +103,42 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         touchPosition = new Vector(event.getX(), event.getY());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < 75) {
+                if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < input.height * 0.05) {
                     input.up = true;
                 }
-                if (Vector.subtractVectors(touchPosition, input.firePosition).getSize() < 75) {
+                if (Vector.subtractVectors(touchPosition, input.firePosition).getSize() < input.height * 0.05) {
                     input.fire = true;
                 }
-                if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < 75){
+                if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < input.height * 0.05){
                     input.left = true;
-                } else if (Vector.subtractVectors(touchPosition, input.rightPosition).getSize() < 75){
+                } else if (Vector.subtractVectors(touchPosition, input.rightPosition).getSize() < input.height * 0.05){
                     input.right = true;
+                }
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < input.height * 0.05) {
+                    input.up = true;
+                }
+                if (Vector.subtractVectors(touchPosition, input.firePosition).getSize() < input.height * 0.05) {
+                    input.fire = true;
+                }
+                if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < input.height * 0.05){
+                    input.left = true;
+                } else if (Vector.subtractVectors(touchPosition, input.rightPosition).getSize() < input.height * 0.05){
+                    input.right = true;
+                }
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+                if (Vector.subtractVectors(touchPosition, input.upPosition).getSize() < input.height * 0.05) {
+                    input.up = false;
+                }
+                if (Vector.subtractVectors(touchPosition, input.firePosition).getSize() < input.height * 0.05) {
+                    input.fire = false;
+                }
+                if (Vector.subtractVectors(touchPosition, input.leftPosition).getSize() < input.height * 0.05){
+                    input.left = false;
+                } else if (Vector.subtractVectors(touchPosition, input.rightPosition).getSize() < input.height * 0.05){
+                    input.right = false;
                 }
                 break;
             case MotionEvent.ACTION_UP:
